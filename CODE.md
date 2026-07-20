@@ -1023,7 +1023,6 @@ TODO: уточнить сигнатуру по коду `core/kafka_producer.py`
 - `_save_and_notify` — сохранение + WS
 - `_flush_album` / `_album_buffer` / `_album_tasks` — сборка медиагрупп (album)
 
-**Известный баг:** `send_file_user` — double-path в MinIO URL.
 
 #### telegram_listener_service.py
 `TelegramListenerService` — оркестрирует `TelegramListener`: запускает/останавливает прослушку по чатам, управляет Kafka control consumer.  
@@ -1148,9 +1147,27 @@ POST /internal/crm-robot-send  →  chat_service.robot_send(CrmMessageOut)
 
 ---
 
+
+Тесты
+
+tests
+  ──├── conftest.py
+    ├── __init__.py
+    ├── integration
+    │   └── test_chat_api.py
+    └── unit
+        └── test_chat_service.py
+
+
+
+
+
 ## Стек
 
 Python 3.12, FastAPI, SQLAlchemy 2.0 async, Kafka (aiokafka), Redis, MinIO, WebSocket, k3s
+
+
+
 
 
 
@@ -1506,8 +1523,7 @@ async def bitrix_onappinstall(
 )
 ```
 
-Дублирует логику `POST /install/bitrix`. Используется как альтернативный endpoint при регистрации события `OnAppInstall` в Битрикс24.  
-Делегирует в → `crm_service.handle_onappinstall(body, domain)`.
+Вебхук на событие ONAPPINSTALL от Bitrix. Всегда сохраняет install-токены. Если placement SETTING_CONNECTOR — парсит PLACEMENT_OPTIONS (connector/line) и редиректит на /install/bitrix с этими данными в query. Иначе — редирект на статичную страницу завершения установки. Не дублирует логику /install/bitrix, а переадресует туда же, добавляя данные о коннекторе/линии для конкретного сценария Bitrix.
 
 ---
 
@@ -1584,7 +1600,6 @@ async def bitrix_connect(
 | GET/POST | `/html/install_finish.html` | `install_finish.html` |
 | GET/POST | `/html/html/contact-tab.html` | `contact_tab.html` |
 
-> ⚠️ Путь `/html/html/contact-tab.html` выглядит как дублирование префикса — возможно, баг в роутере.
 
 ---
 
@@ -2194,20 +2209,3 @@ async def call(
 ```
 
 ---
-
-## 11. Пробелы в документации
-
-Следующие файлы не были получены и требуют дополнения:
-
-| Файл | Что неизвестно |
-|------|---------------|
-| `crm/app/core/dependencies.py` | Реализация `get_crm_service`, `get_uow` |
-| `crm/app/core/config.py` | Полный список полей `Settings` |
-| `crm/app/schemas/crm_schemas.py` | Поля `CrmConnectRequest`, `CrmConnectionResponse` и других схем |
-| `crm/app/repositories/crm_repo.py` | `CrmDialogLinkRepository`, `CrmSettingsRepository` (полные классы) |
-| `crm/app/services/crm_service.py` | `get_lines_for_bitrix`, `get_lines_for_tenant`, `get_lines_for_member`, `start_outgoing`, `connect`, `disconnect`, `get_connections`, `handle_robot` (диспетчер), `_robot_send_text`, `_robot_send_file` |
-| `crm/app/services/providers/base.py` | `BaseCrmProvider` |
-| `crm/app/services/providers/bitrix/client.py` | Конструктор, все методы кроме `call` |
-| `crm/app/services/providers/bitrix/provider.py` | Весь файл |
-| `crm/app/api/v1/robots.py` | Весь файл (тело пустое) |
-| Модели `CrmConnection`, `CrmDialogLink`, `CrmSettings` | Полные поля таблиц |

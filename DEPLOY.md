@@ -358,4 +358,19 @@ sudo kubectl get secret dovechat-secret -n dchat \
 ```
 
 
-*DoveChat © 2026*
+### Масштабирование 
+#### Кафка:
+Изменить количество партиций в kafka-init-job.yaml
+```bash
+kafka-topics --bootstrap-server kafka.dchat.svc.cluster.local:9093 --create --if-not-exists --topic telegram_bot_outgoing --partitions 3 --replication-factor 1
+```
+Изменить количество партиций и реплик 
+```bash
+kubectl kubectl -n dchat delete job kafka-init-topics && kubectl -n dchat apply -f kafka-init-job.yaml
+kubectl -n dchat exec deployment/kafka -- kafka-topics --bootstrap-server kafka.dchat.svc.cluster.local:9093 --alter --topic telegram_bot_outgoing --partitions 3
+kubectl -n dchat scale deployment/outgoing-consumer --replicas=3
+```
+смотреть как работает
+```bash
+watch -n 1 'curl -s http://localhost:31090/api/v1/query?query=kafka_consumergroup_lag | jq -r ".data.result[] | select(.metric.topic | test(\"telegram_bot\")) | \"topic: \(.metric.topic)  partition: \(.metric.partition)  value: \(.value[1])\""'
+```
