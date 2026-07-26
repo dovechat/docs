@@ -34,6 +34,67 @@ mc mirror /opt/dovechat/media_backup/YYYY-MM-DD/ <alias>/<bucket>/
 
 Контроль выполнения бэкапов — через встроенный интерфейс Airflow (статусы тасков DAG: `dump_db`, `upload_dump`, `cleanup_dump`, `backup_media`, `cleanup_media` — успех/ошибка по каждому запуску, история запусков, логи по каждой задаче).
 
+### Подробно по пунктам
+#### Kafka lag
+
+Раздел: Explore
+Ссылка: /grafana/explore → datasource prometheus
+Название: kafka_consumergroup_lag
+Суть: отставание consumer-групп по offset'ам в очередях
+Если пусто: дёрни нагрузку на любой топик или подожди — экспортер сам пушит постоянно, пусто не должно быть в принципе; если пусто — глянь Targets, up ли kafka-exporter
+
+#### Pod failed (алерт)
+
+Раздел: Alerting → Alert rules
+Ссылка: /grafana/alerting/grafana/efpujiwnlrdvkc/view
+Название: Pod failed
+Суть: срабатывает если под в dchat не в Ready
+Если пусто/не триггерится: всё ок, значит поды живы — специально ронять под не нужно
+
+#### 500 in logs (алерт)
+
+Раздел: Alerting → Alert rules
+Ссылка: /grafana/alerting/grafana/ffpukb7cziby8d/view
+Название: 500 in logs
+Суть: считает строки level=error в логах за 5 минут (через Loki)
+Если пусто: вызови любой 500-эндпоинт, глянь через Explore datasource loki
+
+#### Kafka consumer lag > 2000 (алерт, сегодня добавлен)
+
+Раздел: Alerting → Alert rules
+Ссылка: https://dev.dove-chat.pro/grafana/alerting/grafana/ffsu69afwt98gc/view
+Название: Kafka consumer lag (как назвал)
+Суть: тот же kafka_consumergroup_lag, но с порогом и алертом
+Если пусто: то же, что и п.1
+
+
+#### Webhook processing time
+Раздел: Explore
+Ссылка: /grafana/explore → datasource prometheus
+Название: dovechat_webhook_processing_seconds_count (и _sum, _bucket)
+Суть: время обработки входящих вебхуков (TG bot, whatsapp_green, waba)
+Если пусто: отправить тестовое сообщение 
+количество - https://dev.dove-chat.pro/grafana/d/adzxm6d/main?viewPanel=panel-10
+время обработки - https://dev.dove-chat.pro/grafana/d/adzxm6d/main?viewPanel=panel-11
+
+
+#### Webhook requests (success/error)
+Раздел: Grafana Dashboard main
+Ссылка: добавь панель, дам прямую после сохранения — сейчас создай сам через Add Panel
+Название: dovechat_webhook_requests_total
+Суть: счётчик вызовов вебхука по статусу success/error (TG bot; Green/WABA — после проверки)
+Если пусто: отправить тестовое сообщение / вызвать реальную ошибку в обработке
+https://dev.dove-chat.pro/grafana/d/adzxm6d/main?viewPanel=panel-12
+
+#### Webhook error rate (%)
+Раздел: Grafana Dashboard main
+Ссылка: добавь панель, дам прямую после сохранения
+Название: rate(dovechat_webhook_requests_total{status="error"}[5m]) / rate(dovechat_webhook_requests_total[5m]) * 100
+Суть: процент ошибок среди всех вызовов вебхука за последние 5 минут
+Если пусто: нужны и success, и error события в окне 5 минут одновременно
+https://dev.dove-chat.pro/grafana/d/adzxm6d/main?viewPanel=panel-13
+
+
 ## 4. Управление инстансами
 
 **Kubernetes (k3s):** Проект состоит из множества независимых сервисов (chat, crm, account, admin и фронтенды, kafka, apache airflow, telegram connector, db, redis), которые нужно обновлять, масштабировать и перезапускать по отдельности, не затрагивая остальные. Kubernetes даёт для этого готовый механизм — изолированные под-контейнеры на сервис, единообразный способ раскатки новых версий, автоматический перезапуск упавших подов и возможность увеличить число реплик конкретного сервиса при росте нагрузки, не трогая архитектуру целиком. 
