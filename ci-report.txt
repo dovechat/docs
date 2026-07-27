@@ -1,54 +1,56 @@
 CI TEST REPORT
-Mon Jul 20 04:59:48 PM +04 2026
+Mon Jul 27 04:54:33 AM +04 2026
 ============================= test session starts ==============================
 platform linux -- Python 3.12.12, pytest-7.4.4, pluggy-1.6.0
 rootdir: /mono/account
 configfile: pytest.ini
 plugins: cov-4.1.0, respx-0.23.1, asyncio-0.23.8, Faker-30.10.0, anyio-4.12.1
 asyncio: mode=Mode.AUTO
-collected 124 items
+collected 144 items
 
 tests/integration/test_auth.py ...                                       [  2%]
-tests/integration/test_billing_api.py .........                          [  9%]
-tests/integration/test_channel_api.py ....                               [ 12%]
-tests/integration/test_line_api.py .........                             [ 20%]
-tests/integration/test_member_api.py .....                               [ 24%]
-tests/integration/test_notification_api.py ................              [ 37%]
-tests/integration/test_sms_sender.py ...                                 [ 39%]
-tests/integration/test_tenant_api.py ......                              [ 44%]
-tests/integration/test_waba.py .                                         [ 45%]
-tests/integration/test_whatsapp_green_api.py .....                       [ 49%]
-tests/unit/test_auth_service.py ..                                       [ 50%]
-tests/unit/test_billing_service.py ...........                           [ 59%]
-tests/unit/test_channel_service.py ........                              [ 66%]
-tests/unit/test_line_service.py .........                                [ 73%]
-tests/unit/test_members.py ........                                      [ 79%]
-tests/unit/test_notification_service.py ............                     [ 89%]
+tests/integration/test_billing_api.py .........                          [  8%]
+tests/integration/test_channel_api.py ....                               [ 11%]
+tests/integration/test_line_api.py .........                             [ 17%]
+tests/integration/test_member_api.py .....                               [ 20%]
+tests/integration/test_notification_api.py ................              [ 31%]
+tests/integration/test_sms_sender.py ...                                 [ 34%]
+tests/integration/test_tenant_api.py ......                              [ 38%]
+tests/integration/test_waba.py .                                         [ 38%]
+tests/integration/test_whatsapp_green_api.py .....                       [ 42%]
+tests/security/test_jwt_service.py .........                             [ 48%]
+tests/security/test_rbac.py ...........                                  [ 56%]
+tests/unit/test_auth_service.py ..                                       [ 57%]
+tests/unit/test_billing_service.py ...........                           [ 65%]
+tests/unit/test_channel_service.py ........                              [ 70%]
+tests/unit/test_line_service.py .........                                [ 77%]
+tests/unit/test_members.py ........                                      [ 82%]
+tests/unit/test_notification_service.py ............                     [ 90%]
 tests/unit/test_tenant_service.py ..........                             [ 97%]
 tests/unit/test_whatsapp_green.py ...                                    [100%]
 
-============================= 124 passed in 40.51s =============================
+============================= 144 passed in 47.33s =============================
 ============================= test session starts ==============================
 platform linux -- Python 3.12.12, pytest-7.4.4, pluggy-1.6.0
 rootdir: /mono/chat
 configfile: pytest.ini
 plugins: cov-4.1.0, asyncio-0.23.8, Faker-30.10.0, anyio-4.12.1
 asyncio: mode=Mode.STRICT
-collected 155 items
+collected 161 items
 
 tests/integration/test_chat_api.py ...............                       [  9%]
-tests/integration/test_webhooks_api.py sssss                             [ 12%]
+tests/integration/test_webhooks_api.py .....                             [ 12%]
 tests/integration/test_websocket_api.py .........                        [ 18%]
-tests/unit/test_bot_service.py .................                         [ 29%]
-tests/unit/test_chat_service.py ........................................ [ 55%]
-.....................                                                    [ 69%]
-tests/unit/test_line_service.py .....                                    [ 72%]
-tests/unit/test_webhook_service.py ..................                    [ 83%]
-tests/unit/test_websocket_manager.py ..............                      [ 92%]
+tests/security/test_webhook_tokens.py ......                             [ 21%]
+tests/unit/test_bot_service.py .................                         [ 32%]
+tests/unit/test_chat_service.py ........................................ [ 57%]
+.....................                                                    [ 70%]
+tests/unit/test_line_service.py .....                                    [ 73%]
+tests/unit/test_webhook_service.py ..................                    [ 84%]
+tests/unit/test_websocket_manager.py ..............                      [ 93%]
 tests/unit/test_websocket_service.py ...........                         [100%]
 
-
-================= 150 passed, 5 skipped, 15 warnings in 0.72s ==================
+======================= 161 passed, 12 warnings in 1.26s =======================
 ============================= test session starts ==============================
 platform linux -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0
 rootdir: /mono/admin
@@ -67,4 +69,4 @@ tests/unit/test_instance_service.py ...........                          [ 78%]
 tests/unit/test_line_service.py ...........                              [ 89%]
 tests/unit/test_tenant_service.py ...........                            [100%]
 
-============================= 102 passed in 17.97s =============================
+============================= 102 passed in 19.82s =============================
